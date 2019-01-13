@@ -108,7 +108,7 @@
     color: '#D3D3D3',
     icon: 'assistant.png',
     label: function() {
-      return this.name || "Goolge Assistant";
+      return this.name || "Google Assistants";
     },
     oneditsave: function () {
       var n = $('#node-input-device option:selected').text();
@@ -123,7 +123,6 @@
         $('#node-input-acknowledge').prop('checked', true);
       }
 
-
       var getDevs = function (account){
         $.getJSON('google-home/devices/' + account, function(data){
           console.log("getDevs");
@@ -134,6 +133,9 @@
               value: parseInt(data[d].id),
               text: data[d].name.name
             }).appendTo('#node-input-device');
+          }
+          if (node.device) {
+            $('#node-input-device').val(node.device);
           }
         })
       }
@@ -150,8 +152,10 @@
         var account = $('#node-input-conf').val();
         console.log("account changed: ", account);
         if (account != '_ADD_') {
+          $('#node-input-device-refresh').addClass('disabled');
           setTimeout(function(){
-            getDevs(account)
+            getDevs(account);
+            $('#node-input-device-refresh').removeClass('disabled');
           },2000);
         } else {
           //console.log("new account");
