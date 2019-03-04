@@ -98,7 +98,7 @@
     category: 'Google_Assistant',
     defaults: {
       conf: {value: "", type: "google-home-conf"},
-      device: {value: ""},
+      device: {value: "", required: true},
       acknowledge: {value: true},
       name: {},
       topic: {}
@@ -190,6 +190,12 @@
     <input type="text" id="node-input-conf">
   </div>
   <div class="form-row">
+    <label for="node-input-device"><i class="icon-tag"></i> Device</label>
+    <select id="node-input-device">
+    </select>
+    <a id="node-input-device-refresh" class="btn"><i class="fa fa-refresh"></i></a>
+  </div>
+  <div class="form-row" hidden>
     <label for="node-input-name"><i class="icon-tag"></i> Name</label>
     <input id="node-input-name">
   </div>
@@ -204,6 +210,7 @@
     category: 'Google_Assistant',
     defaults: {
       conf: {required: true, type: "google-home-conf", value:""},
+      device: {value: ""},
       name: {}
     },
     outputs: 0,
@@ -212,6 +219,70 @@
     icon: 'assistant.png',
     label: function() {
       return this.name || "Google Assistant Response";
+    },
+    oneditsave: function () {
+      var n = $('#node-input-device option:selected').text();
+      //console.log("selected name " + n);
+      this.name = n;
+      $('#node-input-name').val(n);
+    },
+    oneditprepare: function(){
+      var node =this;
+      var getDevs = function (account){
+        $.getJSON('google-home/devices/' + account, function(data){
+          console.log("getDevs");
+          console.log(data);
+          $('#node-input-device').find('option').remove().end();
+          for (d in data) {
+            $('<option/>',{
+              value: parseInt(data[d].id),
+              text: data[d].name.name
+            }).appendTo('#node-input-device');
+          }
+          if (node.device) {
+            $('#node-input-device').val(node.device);
+          }
+        })
+      }
+
+      if (node.conf) {
+        var account = $('#node-input-conf').val();
+        //console.log("account: ", account);
+        if (account != '_ADD_') {
+          getDevs(account);
+        }
+      }
+
+      $('#node-input-conf').change(function(){
+        var account = $('#node-input-conf').val();
+        console.log("account changed: ", account);
+        if (account != '_ADD_') {
+          $('#node-input-device-refresh').addClass('disabled');
+          setTimeout(function(){
+            getDevs(account);
+            $('#node-input-device-refresh').removeClass('disabled');
+          },2000);
+        } else {
+          //console.log("new account");
+          $('#node-input-device').find('option').remove().end();
+          $('#node-input-device').val("");
+        }
+      });
+
+
+      $('#node-input-device-refresh').click(function(){
+        $('#node-input-device-refresh').addClass('disabled');
+        var account = $('#node-input-conf').val();
+        $.ajax({
+          url: 'google-home/refresh/' + account,
+          type: 'POST'
+        }).done(function(data){
+          setTimeout(function(){
+            getDevs(account);
+            $('#node-input-device-refresh').removeClass('disabled');
+          },1500);
+        });
+      });
     }
   })
 </script>
