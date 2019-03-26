@@ -203,7 +203,7 @@ module.exports = function(RED) {
       if (msg._confId) {
         if (msg._confId == node.confId) {
           if (msg._requestId) {
-            //console.log("replying to a command")
+            console.log("replying to a command")
             var resp = {
               requestId: msg._requestId,
               id: msg.deviceId,
@@ -219,7 +219,7 @@ module.exports = function(RED) {
         }
       } else {
         // no conf id in message so must be a report
-        // console.log("status change");
+        console.log("status change");
         var resp = {
           id: node.deviceId,
           execution: msg.payload
@@ -228,6 +228,12 @@ module.exports = function(RED) {
       }
 
     })
+
+    node.conf.register(node);
+
+    node.on('close', function(done){
+      node.conf.unregister(node, done);
+    });
   }
 
   RED.nodes.registerType("google-home-response", googleHomeResponse);
