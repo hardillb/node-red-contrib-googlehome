@@ -263,6 +263,7 @@ module.exports = function(RED) {
     var password = req.body.pass;
     var id = req.body.id;
     getDevices(username,password,id);
+    res.status(200).send();
   });
 
   RED.httpAdmin.post('/google-home/refresh/:id', function(req,res){
