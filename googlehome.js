@@ -24,6 +24,7 @@ module.exports = function(RED) {
   const mqtt = require('mqtt');
   const path = require('path');
   const request = require('request');
+  const mdns = require('mdns');
 
   var devices = {};
 
@@ -33,10 +34,37 @@ module.exports = function(RED) {
     RED.nodes.createNode(this,n);
     this.username = n.username;
     this.password = this.credentials.password;
+    this.localControl = n.localControl;
 
     this.users = {};
 
     var node = this;
+
+    if (node.localControl) {
+      console.log("settings up local control");
+      var callback_url = "";
+      if(RED.settings.httpAdminRoot) {
+          callback_url += RED.settings.httpAdminRoot;
+      }
+
+      if (callback_url.lastIndexOf('/') != (callback_url.length -1)) {
+        callback_url += '/';
+      } 
+      
+      callback_url += 'google-home/localControl/';
+
+      console.log("google home url - " + callback_url);
+      console.log("google home port - " + RED.settings.uiPort);
+
+      node.mdns = mdns.createAdvertisement(mdns.tcp("gh-node-red"), RED.settings.uiPort,{
+        txtRecord: {
+          port: RED.settings.uiPort,
+          path: callback_url,
+          id: node.id
+        }
+      });
+      node.mdns.start();
+    }
 
     var options = {
       username: node.username,
@@ -144,6 +172,10 @@ module.exports = function(RED) {
       if (node.client && node.client.connected) {
         node.client.end();
       }
+      if (node.mdns) {
+        node.mdns.stop();
+        node.mdns = undefined;
+      }
     });
   }
 
@@ -174,11 +206,18 @@ module.exports = function(RED) {
         _confId: node.confId,
         payload: msg.execution
       }
-      node.send(m);
-      if (node.acknowledge) {
+      if (msg.local) {
+        //m.local = true
+        var resp = {
+          id: msg.id,
+          execution: msg.execution
+        }
+        node.conf.reportState(resp);
+      }  else if (node.acknowledge) {
         msg.status = true;
         node.conf.acknowledge(msg);
       }
+      node.send(m);
     }
 
     node.conf.register(node);
@@ -287,4 +326,38 @@ module.exports = function(RED) {
       res.status(404).send();
     }
   });
+
+  RED.httpAdmin.get('/google-home/localControl/:id/identify', function(req,res){
+    if (devices[req.params.id]) {
+      var devs = [];
+      for (var i=0; i<devices[req.params.id].length; i++) {
+        if (devices[req.params.id][i].otherDeviceIds.deviceId) {
+          devs.push({verificationId: devices[req.params.id][i].id});
+        }
+      }
+      res.send(devs);
+    }
+  });
+
+  RED.httpAdmin.post('/google-home/localControl/:conf/execute/:id', function(req,res){
+    var configId = req.params.conf;
+    var dev = req.params.id;
+    var conf = RED.nodes.getNode(configId);
+    var msg = req.body;
+    //console.log("local control\nconf - %s\ndev - %d\nbody - %o", configId, dev,msg);
+    for (var id in conf.users) {
+      if (conf.users.hasOwnProperty(id)) {
+        if (conf.users[id].device === dev) {
+          //console.log("sending message");
+          conf.users[id].command(msg);
+        }
+      }
+    }
+    var status = {
+      id: "" + req.params.id,
+      state: req.body.execution.params
+    }
+    res.status(200).send(status);
+  });
+
 }

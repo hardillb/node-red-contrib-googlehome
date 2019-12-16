@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-googlehome",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A Smart Home Action for Google Home",
   "main": "index.js",
   "scripts": {
@@ -26,7 +26,8 @@
   "author": "hardillb@gmail.com",
   "license": "Apache-2.0",
   "dependencies": {
-    "mqtt": "^2.14.0",
+    "mdns": "^2.5.1",
+    "mqtt": "^2.15.0",
     "request": "^2.83.0"
   }
 }
