@@ -20,7 +20,10 @@
       <input type="password" id="node-config-input-password">
   </div>
   <div class="form-row">
-    <label for="node-config-input-localControl"><i class=""></i> Allow Local Control (experimental)</label>
+    <p>(experimental DO NOT USE unless intructed to)</p>
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-localControl"><i class=""></i> Allow Local Control</label>
     <input type="checkbox" id="node-config-input-localControl">
   </div>
 </script>
@@ -124,7 +127,7 @@
     oneditprepare: function() {
       var node =this;
 
-      if (typeof node.acknoledge === 'undefined') {
+      if (typeof node.acknowledge === 'undefined') {
         $('#node-input-acknowledge').prop('checked', true);
       }
 

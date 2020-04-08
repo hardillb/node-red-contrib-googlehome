@@ -24,7 +24,12 @@ module.exports = function(RED) {
   const mqtt = require('mqtt');
   const path = require('path');
   const request = require('request');
-  const mdns = require('mdns');
+
+  try {
+    var mdns = require('mdns');
+  } catch (e) {
+    var mdns = null;
+  }
 
   var devices = {};
 
@@ -40,7 +45,7 @@ module.exports = function(RED) {
 
     var node = this;
 
-    if (node.localControl) {
+    if (mdns && node.localControl) {
       console.log("settings up local control");
       var callback_url = "";
       if(RED.settings.httpAdminRoot) {
@@ -55,6 +60,7 @@ module.exports = function(RED) {
 
       console.log("google home url - " + callback_url);
       console.log("google home port - " + RED.settings.uiPort);
+
 
       node.mdns = mdns.createAdvertisement(mdns.tcp("gh-node-red"), RED.settings.uiPort,{
         txtRecord: {
@@ -243,12 +249,16 @@ module.exports = function(RED) {
         if (msg._confId == node.confId) {
           if (msg._requestId) {
             console.log("replying to a command")
-            var resp = {
-              requestId: msg._requestId,
-              id: msg.deviceId,
-              execution: msg.payload
+            if (msg.payload && msg.payload.params) {
+              var resp = {
+                requestId: msg._requestId,
+                id: msg.deviceId,
+                execution: msg.payload
+              }
+              node.conf.acknowledge(resp);
+            } else {
+               node.error("No msg.payload or msg.payload.params in status update", msg)
             }
-            node.conf.acknowledge(resp);
           } else {
             // no request id so something wrong
             node.error("No _confId but no _requestId",msg);
@@ -259,11 +269,15 @@ module.exports = function(RED) {
       } else {
         // no conf id in message so must be a report
         console.log("status change");
-        var resp = {
-          id: node.deviceId,
-          execution: msg.payload
+        if (msg.payload && msg.payload.params) {
+          var resp = {
+            id: node.deviceId,
+            execution: msg.payload
+          }
+          node.conf.reportState(resp);
+        } else {
+          node.error("No msg.payload or msg.payload.params in status update", msg)
         }
-        node.conf.reportState(resp);
       }
 
     })

@@ -5,13 +5,16 @@ Google Home Smart Home Action
 
 ## Prerequisite
 
-To support the new Local Control API we now need a mdns server to allow the Google Assistant device to be able find the local Node-RED install.
-
 **This feature is not currently enabled as Local Control is still in beta with Google, but when it goes on general release it will just work**
+
+This is an optional dependency, if you want to be ready for when Local Control is enabled then you can install the following packages before 
+installing the node and it will build the requied part of the node. If you choose not to then things will continue to work as normal.
 
 On Raspbian you need to make sure this the following package is installed.
 
 `sudo apt-get install libavahi-compat-libdnssd-dev`
+
+RedHat based distros are probably looking to install the `avahi-compat-libdns_sd-devel`  package.
 
 ## Install
 
