@@ -127,7 +127,7 @@
     oneditprepare: function() {
       var node =this;
 
-      if (typeof node.acknowledge === 'undefined') {
+      if (node.acknowledge === undefined) {
         $('#node-input-acknowledge').prop('checked', true);
       }
 
