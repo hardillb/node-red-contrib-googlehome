@@ -94,6 +94,46 @@
 </script>
 
 <script type="text/javascript">
+
+  function getDevs(account) {
+    $.getJSON('google-home/devices/' + account, function(data){
+      console.log("getDevs");
+      console.log(data);
+
+      // Split device response to rooms (in case you have e.g. multiple "Christmass lights", one in "Garden" and one in "Living room"
+      var rooms = { 'No roomhint assigned': [] };
+      for (d in data) {
+        var roomHint = (data[d].roomHint || '').trim();
+        if (roomHint == '') {
+          roomHint = 'No roomhint assigned';
+        }
+        if (!rooms.hasOwnProperty(roomHint)) {
+          rooms[roomHint] = [];
+        }
+        rooms[roomHint].push(data[d]);
+      }
+
+      // Add all rooms and devices to the list
+      $('#node-input-device').empty();
+      Object.keys(rooms).sort().forEach(function(key) {
+        let group = $('<optgroup label="' + key + '" />');
+        for (d in rooms[key]) {
+          group.append($('<option/>',{
+            value: parseInt(rooms[key][d].id),
+            text: rooms[key][d].name.name
+          }));
+        }
+        if (rooms[key].length) {
+          $('#node-input-device').append(group);
+        }
+      });
+
+      if (node.device) {
+        $('#node-input-device').val(node.device);
+      }
+    })
+  } 
+
   RED.nodes.registerType('google-home',{
     category: 'Google_Assistant',
     defaults: {
@@ -123,22 +163,6 @@
         $('#node-input-acknowledge').prop('checked', true);
       }
 
-      var getDevs = function (account){
-        $.getJSON('google-home/devices/' + account, function(data){
-          console.log("getDevs");
-          console.log(data);
-          $('#node-input-device').find('option').remove().end();
-          for (d in data) {
-            $('<option/>',{
-              value: parseInt(data[d].id),
-              text: data[d].name.name
-            }).appendTo('#node-input-device');
-          }
-          if (node.device) {
-            $('#node-input-device').val(node.device);
-          }
-        })
-      }
 
       if (node.conf) {
         var account = $('#node-input-conf').val();
@@ -228,22 +252,6 @@
     },
     oneditprepare: function(){
       var node =this;
-      var getDevs = function (account){
-        $.getJSON('google-home/devices/' + account, function(data){
-          console.log("getDevs");
-          console.log(data);
-          $('#node-input-device').find('option').remove().end();
-          for (d in data) {
-            $('<option/>',{
-              value: parseInt(data[d].id),
-              text: data[d].name.name
-            }).appendTo('#node-input-device');
-          }
-          if (node.device) {
-            $('#node-input-device').val(node.device);
-          }
-        })
-      }
 
       if (node.conf) {
         var account = $('#node-input-conf').val();
