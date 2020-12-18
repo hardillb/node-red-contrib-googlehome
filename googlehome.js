@@ -195,6 +195,7 @@ module.exports = function(RED) {
     this.conf = RED.nodes.getNode(n.conf);
     this.confId = n.conf;
     this.deviceId = n.device;
+    this.lastStatus = {};
 
     var node = this;
 
@@ -203,7 +204,7 @@ module.exports = function(RED) {
       if (msg._confId) {
         if (msg._confId == node.confId) {
           if (msg._requestId) {
-            console.log("replying to a command")
+            //console.log("replying to a command")
             var resp = {
               requestId: msg._requestId,
               id: msg.deviceId,
@@ -219,12 +220,16 @@ module.exports = function(RED) {
         }
       } else {
         // no conf id in message so must be a report
-        console.log("status change");
-        var resp = {
-          id: node.deviceId,
-          execution: msg.payload
+        //console.log("status change");
+        if (!RED.util.compareObjects(msg.payload, node.lastStatus)) {
+          //console.log("different status");
+          node.lastStatus = RED.util.cloneMessage(msg.payload);
+          var resp = {
+            id: node.deviceId,
+            execution: msg.payload
+          }
+          node.conf.reportState(resp);
         }
-        node.conf.reportState(resp);
       }
 
     })
