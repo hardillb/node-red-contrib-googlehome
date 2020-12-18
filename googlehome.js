@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-
+ 
 var brokerHost = process.env.GOOGLEHOME_BROKER || 'googlehome.hardill.me.uk';
 var devicesURL = process.env.GOOGLEHOME_URL || 'https://googlehome.hardill.me.uk/user/api/devices';
 
@@ -248,12 +248,19 @@ module.exports = function(RED) {
       if (msg._confId) {
         if (msg._confId == node.confId) {
           if (msg._requestId) {
-            console.log("replying to a command")
+            // console.log("replying to a command")
             if (msg.payload && msg.payload.params) {
               var resp = {
                 requestId: msg._requestId,
                 id: msg.deviceId,
                 execution: msg.payload
+              }
+              if (msg.hasOwnProperty("status")) {
+                //console.log("has status: ", msg.status)
+                resp.status = msg.status;
+              } else {
+                //console.log("defaulting to status: true");
+                resp.status = true;
               }
               node.conf.acknowledge(resp);
             } else {
@@ -268,7 +275,7 @@ module.exports = function(RED) {
         }
       } else {
         // no conf id in message so must be a report
-        console.log("status change");
+        // console.log("status change");
         if (msg.payload && msg.payload.params) {
           var resp = {
             id: node.deviceId,
@@ -346,7 +353,7 @@ module.exports = function(RED) {
     if (devices[req.params.id]) {
       var devs = [];
       for (var i=0; i<devices[req.params.id].length; i++) {
-        if (devices[req.params.id][i].otherDeviceIds.deviceId) {
+        if (devices[req.params.id][i].otherDeviceIds && devices[req.params.id][i].otherDeviceIds.deviceId) {
           devs.push({verificationId: devices[req.params.id][i].id});
         }
       }
