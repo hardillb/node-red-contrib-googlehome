@@ -84,7 +84,7 @@
   </div>
   <div class="form-row">
     <label for="node-input-name"><i class="icon-tag"></i> Name</label>
-    <input id="node-input-name">
+    <input type="text" id="node-input-name">
   </div>
 </script>
 
@@ -138,7 +138,7 @@
       conf: {value: "", type: "google-home-conf"},
       device: {value: "", required: true},
       acknowledge: {value: true},
-      name: {},
+      name: {value:""},
       topic: {}
     },
     outputs: 1,
@@ -155,7 +155,7 @@
     //   $('#node-input-name').val(n);
     // },
     oneditprepare: function() {
-      var node =this;
+      var node=this;
 
       if (typeof node.acknowledge === 'undefined') {
         $('#node-input-acknowledge').prop('checked', true);
@@ -218,7 +218,7 @@
   </div>
   <div class="form-row">
     <label for="node-input-name"><i class="icon-tag"></i> Name</label>
-    <input id="node-input-name">
+    <input type="text" id="node-input-name">
   </div>
 </script>
 
@@ -232,14 +232,14 @@
     defaults: {
       conf: {required: true, type: "google-home-conf", value:""},
       device: {value: ""},
-      name: {}
+      name: {value:""}
     },
     outputs: 0,
     inputs: 1,
     color: '#D3D3D3',
     icon: 'assistant.png',
     label: function() {
-      return this.name || this.device.name || "Google Assistant Response";
+      return this.name || "Google Assistant Response";
     },
     // oneditsave: function () {
     //   var n = $('#node-input-device option:selected').text();
@@ -248,7 +248,7 @@
     //   $('#node-input-name').val(n);
     // },
     oneditprepare: function(){
-      var node =this;
+      var node=this;
 
       if (node.conf) {
         var account = $('#node-input-conf').val();
