@@ -128,13 +128,10 @@
 
       if (node.device) {
         $('#node-input-device').val(node.device);
+
+		// update label for first time users
         if ($('#node-input-name').text() === '') {
-          let firstName = node.name;
-          let roomHint = (node.roomHint || '').trim();
-          if (roomHint !== '') {
-            firstName+= ' (' + roomHint.toLowerCase() + ')';
-          }
-          $('#node-input-name').val(firstName);
+          $('#node-input-name').val(node.name);
         }
       }
     })
