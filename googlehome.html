@@ -82,8 +82,9 @@
     <label for="node-input-topic"><i class="icon-tag"></i> Topic</label>
     <input type="text" id="node-input-topic">
   </div>
-  <div class="form-row">
-    <input type="hidden" id="node-input-name">
+  <div class="form-row" hidden>
+    <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+    <input id="node-input-name">
   </div>
 </script>
 
@@ -95,7 +96,7 @@
 
 <script type="text/javascript">
 
-  function getDevs(account) {
+  function getDevs(account, node) {
     $.getJSON('google-home/devices/' + account, function(data){
       console.log("getDevs");
       console.log(data);
@@ -159,10 +160,9 @@
     oneditprepare: function() {
       var node =this;
 
-      if (typeof node.acknoledge === 'undefined') {
+      if (typeof node.acknowledge === 'undefined') {
         $('#node-input-acknowledge').prop('checked', true);
       }
-
 
       if (node.conf) {
         var account = $('#node-input-conf').val();
@@ -178,13 +178,11 @@
         if (account != '_ADD_') {
           $('#node-input-device-refresh').addClass('disabled');
           setTimeout(function(){
-            getDevs(account);
+            getDevs(account, node);
             $('#node-input-device-refresh').removeClass('disabled');
           },2000);
         } else {
-          //console.log("new account");
-          $('#node-input-device').find('option').remove().end();
-          $('#node-input-device').val("");
+          $('#node-input-device').empty().val('');
         }
       });
 
@@ -197,7 +195,7 @@
           type: 'POST'
         }).done(function(data){
           setTimeout(function(){
-            getDevs(account);
+            getDevs(account, node);
             $('#node-input-device-refresh').removeClass('disabled');
           },1500);
         });
@@ -257,7 +255,7 @@
         var account = $('#node-input-conf').val();
         //console.log("account: ", account);
         if (account != '_ADD_') {
-          getDevs(account);
+          getDevs(account, node);
         }
       }
 
@@ -267,13 +265,11 @@
         if (account != '_ADD_') {
           $('#node-input-device-refresh').addClass('disabled');
           setTimeout(function(){
-            getDevs(account);
+            getDevs(account, node);
             $('#node-input-device-refresh').removeClass('disabled');
           },2000);
         } else {
-          //console.log("new account");
-          $('#node-input-device').find('option').remove().end();
-          $('#node-input-device').val("");
+          $('#node-input-device').empty().val('');
         }
       });
 
@@ -286,7 +282,7 @@
           type: 'POST'
         }).done(function(data){
           setTimeout(function(){
-            getDevs(account);
+            getDevs(account, node);
             $('#node-input-device-refresh').removeClass('disabled');
           },1500);
         });
