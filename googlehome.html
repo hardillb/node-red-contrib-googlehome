@@ -129,7 +129,12 @@
       if (node.device) {
         $('#node-input-device').val(node.device);
         if ($('#node-input-name').text() === '') {
-        	$('#node-input-name').val(node.name);
+          let firstName = node.name;
+          let roomHint = (node.roomHint || '').trim();
+          if (roomHint !== '') {
+            firstName+= ' (' + roomHint.toLowerCase() + ')';
+          }
+          $('#node-input-name').val(firstName);
         }
       }
     })
