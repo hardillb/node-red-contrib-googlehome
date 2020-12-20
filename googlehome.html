@@ -128,6 +128,9 @@
 
       if (node.device) {
         $('#node-input-device').val(node.device);
+        if ($('#node-input-name').text() === '') {
+        	$('#node-input-name').val(node.name);
+        }
       }
     })
   }
@@ -155,7 +158,6 @@
         $('#node-input-acknowledge').prop('checked', true);
       }
 
-
       if (node.conf) {
         var account = $('#node-input-conf').val();
         //console.log("account: ", account);
@@ -163,11 +165,6 @@
           getDevs(account, node);
         }
       }
-
-      $('#node-input-device').change(function(){
-        var n = $('#node-input-device option:selected').text();
-        $('#node-input-name').val(n);
-      });
 
       $('#node-input-conf').change(function(){
         var account = $('#node-input-conf').val();
@@ -184,6 +181,10 @@
         }
       });
 
+      $('#node-input-device').change(function(){
+        var n = $('#node-input-device option:selected').text();
+        $('#node-input-name').val(n);
+      });
 
       $('#node-input-device-refresh').click(function(){
         $('#node-input-device-refresh').addClass('disabled');
@@ -198,13 +199,15 @@
           },1500);
         });
       });
-
-
     }
   })
 </script>
 
 <script type="text/x-red" data-template-name="google-home-response">
+  <div class="form-row">
+    <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+    <input type="text" id="node-input-name">
+  </div>
   <div class="form-row">
     <label for="node-input-conf"><i class="icon-tag"></i> Account</label>
     <input type="text" id="node-input-conf">
@@ -214,10 +217,6 @@
     <select id="node-input-device">
     </select>
     <a id="node-input-device-refresh" class="btn"><i class="fa fa-refresh"></i></a>
-  </div>
-  <div class="form-row" hidden>
-    <label for="node-input-name"><i class="icon-tag"></i> Name</label>
-    <input id="node-input-name">
   </div>
 </script>
 
@@ -239,12 +238,6 @@
     icon: 'assistant.png',
     label: function() {
       return this.name || "Google Assistant Response";
-    },
-    oneditsave: function () {
-      var n = $('#node-input-device option:selected').text();
-      //console.log("selected name " + n);
-      this.name = n;
-      $('#node-input-name').val(n);
     },
     oneditprepare: function(){
       var node =this;
@@ -272,6 +265,10 @@
         }
       });
 
+      $('#node-input-device').change(function(){
+        var n = $('#node-input-device option:selected').text();
+        $('#node-input-name').val(n);
+      });
 
       $('#node-input-device-refresh').click(function(){
         $('#node-input-device-refresh').addClass('disabled');
