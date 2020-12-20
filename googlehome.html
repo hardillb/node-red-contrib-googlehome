@@ -43,7 +43,7 @@
       var node = this;
       var user = $('#node-config-input-username').val();
       var pass = $('#node-config-input-password').val();
-      console.log("pass: ", pass);
+      //console.log("pass: ", pass);
       if (pass != '_PWD_') {
         var account = {
           id: node.id,
@@ -171,7 +171,7 @@
 
       $('#node-input-conf').change(function(){
         var account = $('#node-input-conf').val();
-        console.log("account changed: ", account);
+        //console.log("account changed: ", account);
         if (account != '_ADD_') {
           $('#node-input-device-refresh').addClass('disabled');
           setTimeout(function(){
@@ -256,7 +256,7 @@
 
       $('#node-input-conf').change(function(){
         var account = $('#node-input-conf').val();
-        console.log("account changed: ", account);
+        //console.log("account changed: ", account);
         if (account != '_ADD_') {
           $('#node-input-device-refresh').addClass('disabled');
           setTimeout(function(){
