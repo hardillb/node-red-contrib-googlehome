@@ -95,11 +95,8 @@
 
 <script type="text/javascript">
 
-  function getDevs(account) {
+  function getDevs(account, node) {
     $.getJSON('google-home/devices/' + account, function(data){
-      console.log("getDevs");
-      console.log(data);
-
       // Split device response to rooms (in case you have e.g. multiple "Christmass lights", one in "Garden" and one in "Living room"
       var rooms = { 'No roomhint assigned': [] };
       for (d in data) {
@@ -148,7 +145,6 @@
     color: '#D3D3D3',
     icon: 'assistant.png',
     label: function() {
-      return this.name || "Google Assistants";
     },
     oneditsave: function () {
       var n = $('#node-input-device option:selected').text();
@@ -168,7 +164,7 @@
         var account = $('#node-input-conf').val();
         //console.log("account: ", account);
         if (account != '_ADD_') {
-          getDevs(account);
+          getDevs(account, node);
         }
       }
 
@@ -178,7 +174,7 @@
         if (account != '_ADD_') {
           $('#node-input-device-refresh').addClass('disabled');
           setTimeout(function(){
-            getDevs(account);
+            getDevs(account, node);
             $('#node-input-device-refresh').removeClass('disabled');
           },2000);
         } else {
@@ -196,7 +192,7 @@
           type: 'POST'
         }).done(function(data){
           setTimeout(function(){
-            getDevs(account);
+            getDevs(account, node);
             $('#node-input-device-refresh').removeClass('disabled');
           },1500);
         });
@@ -256,7 +252,7 @@
         var account = $('#node-input-conf').val();
         //console.log("account: ", account);
         if (account != '_ADD_') {
-          getDevs(account);
+          getDevs(account, node);
         }
       }
 
@@ -266,7 +262,7 @@
         if (account != '_ADD_') {
           $('#node-input-device-refresh').addClass('disabled');
           setTimeout(function(){
-            getDevs(account);
+            getDevs(account, node);
             $('#node-input-device-refresh').removeClass('disabled');
           },2000);
         } else {
@@ -284,7 +280,7 @@
           type: 'POST'
         }).done(function(data){
           setTimeout(function(){
-            getDevs(account);
+            getDevs(account, node);
             $('#node-input-device-refresh').removeClass('disabled');
           },1500);
         });
