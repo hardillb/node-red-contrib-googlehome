@@ -22,7 +22,7 @@
 </script>
 
 <script type="text/x-red" data-help-name="google-home-conf">
-  <p>If you don't have an account on the bridge create one 
+  <p>If you don't have an account on the bridge create one
     <a target="_blank" href="https://googlehome.hardill.me.uk/">here</a>.</p>
 </script>
 
@@ -90,7 +90,7 @@
 
 <script type="text/x-red" data-help-name="google-home">
   <p></p>
-  <p>When Auto Acknowledge is enabled there is no need for a Google Home Response node, 
+  <p>When Auto Acknowledge is enabled there is no need for a Google Home Response node,
   but all actions will be assumed to have succeeded</p>
 </script>
 
@@ -130,7 +130,7 @@
         $('#node-input-device').val(node.device);
       }
     })
-  } 
+  }
 
   RED.nodes.registerType('google-home',{
     category: 'Google_Assistant',
@@ -183,7 +183,6 @@
         }
       });
 
-
       $('#node-input-device-refresh').click(function(){
         $('#node-input-device-refresh').addClass('disabled');
         var account = $('#node-input-conf').val();
@@ -197,7 +196,6 @@
           },1500);
         });
       });
-
 
     }
   })
