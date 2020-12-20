@@ -145,6 +145,7 @@
     color: '#D3D3D3',
     icon: 'assistant.png',
     label: function() {
+      return this.name || "Google Assistant";
     },
     oneditsave: function () {
       var n = $('#node-input-device option:selected').text();
