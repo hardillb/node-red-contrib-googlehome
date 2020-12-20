@@ -148,12 +148,12 @@
     label: function() {
       return this.name || "Google Assistants";
     },
-    oneditsave: function () {
-      var n = $('#node-input-device option:selected').text();
-      //console.log("selected name " + n);
-      this.name = n;
-      $('#node-input-name').val(n);
-    },
+    // oneditsave: function () {
+    //   var n = $('#node-input-device option:selected').text();
+    //   //console.log("selected name " + n);
+    //   this.name = n;
+    //   $('#node-input-name').val(n);
+    // },
     oneditprepare: function() {
       var node =this;
 
@@ -168,6 +168,11 @@
           getDevs(account, node);
         }
       }
+
+      $('#node-input-device').change(function(){
+        var n = $('#node-input-device option:selected').text();
+        $('#node-input-name').val(n);
+      });
 
       $('#node-input-conf').change(function(){
         var account = $('#node-input-conf').val();
@@ -234,14 +239,14 @@
     color: '#D3D3D3',
     icon: 'assistant.png',
     label: function() {
-      return this.name || "Google Assistant Response";
+      return this.name || this.device.name || "Google Assistant Response";
     },
-    oneditsave: function () {
-      var n = $('#node-input-device option:selected').text();
-      //console.log("selected name " + n);
-      this.name = n;
-      $('#node-input-name').val(n);
-    },
+    // oneditsave: function () {
+    //   var n = $('#node-input-device option:selected').text();
+    //   console.log("selected name " + n);
+    //   this.name = n;
+    //   $('#node-input-name').val(n);
+    // },
     oneditprepare: function(){
       var node =this;
 
@@ -252,6 +257,11 @@
           getDevs(account, node);
         }
       }
+
+      $('#node-input-device').change(function(){
+        var n = $('#node-input-device option:selected').text();
+        $('#node-input-name').val(n);
+      });
 
       $('#node-input-conf').change(function(){
         var account = $('#node-input-conf').val();
