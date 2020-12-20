@@ -98,9 +98,6 @@
 
   function getDevs(account, node) {
     $.getJSON('google-home/devices/' + account, function(data){
-      console.log("getDevs");
-      console.log(data);
-
       // Split device response to rooms (in case you have e.g. multiple "Christmass lights", one in "Garden" and one in "Living room"
       var rooms = { 'No roomhint assigned': [] };
       for (d in data) {
@@ -168,7 +165,7 @@
         var account = $('#node-input-conf').val();
         //console.log("account: ", account);
         if (account != '_ADD_') {
-          getDevs(account);
+          getDevs(account, node);
         }
       }
 
