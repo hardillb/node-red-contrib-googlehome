@@ -26,6 +26,7 @@ module.exports = function(RED) {
   const request = require('request');
 
   var devices = {};
+  var status = {};
 
   var caPath = path.join(__dirname, "ca-chain.pem");
 
@@ -133,11 +134,17 @@ module.exports = function(RED) {
     this.acknowledge = function(msg) {
       var topic = "response/" + node.username;
       node.client.publish(topic, JSON.stringify(msg));
+      if (msg.status) {
+        status[msg.id] = RED.util.cloneMessage(msg.execution.params);
+      }
     }
 
     this.reportState = function(msg) {
       var topic = "status/" + node.username;
-      node.client.publish(topic, JSON.stringify(msg));
+      if (!RED.compareObjects(msg.execution.params, status[msg.id])) {
+        status[msg.id] = RED.util.cloneMessage(msg.execution.params)
+        node.client.publish(topic, JSON.stringify(msg));
+      }
     }
 
     this.on('close', function(){
@@ -195,7 +202,7 @@ module.exports = function(RED) {
     this.conf = RED.nodes.getNode(n.conf);
     this.confId = n.conf;
     this.deviceId = n.device;
-    this.lastStatus = {};
+    //this.lastStatus = {};
 
     var node = this;
 
@@ -221,14 +228,16 @@ module.exports = function(RED) {
       } else {
         // no conf id in message so must be a report
         //console.log("status change");
-        if (!RED.util.compareObjects(msg.payload, node.lastStatus)) {
-          //console.log("different status");
-          node.lastStatus = RED.util.cloneMessage(msg.payload);
-          var resp = {
-            id: node.deviceId,
-            execution: msg.payload
-          }
-          node.conf.reportState(resp);
+        if (msg.payload.params) {
+          //if (!RED.util.compareObjects(msg.payload.params, node.lastStatus)) {
+            //console.log("different status");
+            //node.lastStatus = RED.util.cloneMessage(msg.payload.params);
+            var resp = {
+              id: node.deviceId,
+              execution: msg.payload
+            }
+            node.conf.reportState(resp);
+          //}
         }
       }
 
