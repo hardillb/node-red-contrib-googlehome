@@ -141,7 +141,7 @@ module.exports = function(RED) {
 
     this.reportState = function(msg) {
       var topic = "status/" + node.username;
-      if (!RED.compareObjects(msg.execution.params, status[msg.id])) {
+      if (!RED.util.compareObjects(msg.execution.params, status[msg.id])) {
         status[msg.id] = RED.util.cloneMessage(msg.execution.params)
         node.client.publish(topic, JSON.stringify(msg));
       }
