@@ -254,7 +254,28 @@ module.exports = function(RED) {
 
   function getDevices(username, password, id) {
     if (username && password) {
+      fetch(devicesURL, {
+        headers: {
+          Authorization: `Basic ${Buffer.from(username + ":" + password).toString('base64')}`
+        }
+      }).then(resp => {
+
+      })
       request.get({
+        url: devicesURL,
+        auth: {
+          username: username,
+          password: password
+        }
+      }, function(err,res,body) {
+        if (!err && res.statusCode == 200) {
+          var devs = JSON.parse(body);
+          devices[id] = devs
+        } else {
+          //console.("err: " + err);
+          RED.log.log("Problem looking up " + username + "'s devices");
+        }
+      });request.get({
         url: devicesURL,
         auth: {
           username: username,
