@@ -18,3 +18,5 @@ account you can define a number of devices. You can then configure a node to rep
 that device in a Node-RED flow.
 
 The full documentation can be found [here](https://googlehome.hardill.me.uk/docs)
+
+Minimum NodeJS version is now 20 (uses `fetch` to replace `request`)

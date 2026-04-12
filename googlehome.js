@@ -23,7 +23,6 @@ module.exports = function(RED) {
   const fs = require('fs');
   const mqtt = require('mqtt');
   const path = require('path');
-  const request = require('request');
 
   var devices = {};
   var status = {};
@@ -214,6 +213,7 @@ module.exports = function(RED) {
             //console.log("replying to a command")
             var resp = {
               requestId: msg._requestId,
+              status: msg.status,
               id: msg.deviceId,
               execution: msg.payload
             }
@@ -254,21 +254,25 @@ module.exports = function(RED) {
 
   function getDevices(username, password, id) {
     if (username && password) {
-      request.get({
-        url: devicesURL,
-        auth: {
-          username: username,
-          password: password
+      fetch(devicesURL, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Basic ${Buffer.from(username + ':' + password, "utf-8").toString('base64')}`
         }
-      }, function(err,res,body) {
-        if (!err && res.statusCode == 200) {
-          var devs = JSON.parse(body);
-          devices[id] = devs
+      })
+      .then(res => {
+        if (res.status === 200) {
+          return res.json()
         } else {
-          //console.("err: " + err);
           RED.log.log("Problem looking up " + username + "'s devices");
         }
-      });
+      })
+      .then(json => {
+        devices[id] = json
+      })
+      .catch( err => {
+        console.log(err)
+      })
     }
   }
 
